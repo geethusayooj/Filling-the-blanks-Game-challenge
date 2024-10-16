@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const questionsList = [
     new Question("APP_E", ["K", "L", "T", "K"], "APPLE"),
-    new Question("D_G", ["M", "O", "H", "A"], "DOG"),
-    new Question("B_NANA", ["M", "A", "N", "Y"], "BANANA"),
+    new Question("B_LL", ["M", "O", "H", "A"], "BALL"),
+    new Question("DO_", ["G", "A", "O", "Y"], "DOG"),
     new Question("C_T", ["R", "Z", "A", "X"], "CAT"),
   ];
   const quizDuration = 40; // Duration in seconds
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   startTimer();
   // Restart button click event to reset the game
   restartButton.addEventListener("click", () => {
-    restartButton.style.display = "none"; 
+    restartButton.style.display = "none";
     resetGame();
   });
 
@@ -37,29 +37,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Display the question
     for (let i = 0; i < question.length; i++) {
-      const showQns = document.createElement("span");
-      showQns.innerText = question[i];
-      questionElement.appendChild(showQns);
-      // Add drop event to question element
-      showQns.setAttribute("dataindex", i);
-      showQns.addEventListener("dragover", (event) => {
-        event.preventDefault(); // Prevent default to allow drop
-      });
-      showQns.addEventListener("drop", (event) => {
-        const selectedLetter = event.dataTransfer.getData("text/plain");
-        checkAnswer(selectedLetter, i);
-      });
+      if (question[i] === "_") {
+        // Create a box for the missing letter
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.setAttribute("dataindex", i);
+        // Add dragover and drop event handlers
+        box.addEventListener("dragover", (event) => {
+          event.preventDefault(); // Allow dropping
+        });
+        box.addEventListener("drop", (event) => {
+          const selectedLetter = event.dataTransfer.getData("text/plain");
+          checkAnswer(selectedLetter, i);
+        });
+        questionElement.appendChild(box);
+      } else {
+        // Display letters as they are
+        const letterElement = document.createElement("span");
+        letterElement.innerText = question[i];
+        questionElement.appendChild(letterElement);
+      }
     }
+
     // Display the choices
     for (let i = 0; i < letters.length; i++) {
       const showchoices = document.createElement("span");
       showchoices.innerText = letters[i];
       showchoices.classList.add("choice");
-
-      // showchoices.onclick = (event) => {
-      //   const selectedLetter = event.target.innerText;
-      //   checkAnswer(selectedLetter);
-      // };
 
       showchoices.setAttribute("draggable", true); // Makes the letter draggable
       showchoices.addEventListener("dragstart", (event) => {
@@ -96,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
             2000
           );
           restartButton.style.display = "block";
-          
         }
       }
     } else {
@@ -141,14 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function showResults() {
     displayMessage("Time's up! Try again.", 2000);
     restartButton.style.display = "block";
-    
   }
 
   function resetGame() {
-    game.currentQuestion = 0; // Reset to the first question
-    game.timeRemaining = quizDuration; // Reset the timer
+    game.currentQuestion = 0;
+    game.timeRemaining = quizDuration;
     game.addQuestion(structuredClone(questionsList));
-    showQuestion(); // Show the first question again
-    startTimer(); // Restart the timer
+    showQuestion();
+    startTimer();
   }
 });
