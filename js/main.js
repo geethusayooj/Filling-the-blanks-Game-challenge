@@ -99,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "Congratulations! You've completed all questions.",
             2000
           );
+          clearInterval(timer)
+          timeRemainingContainer.innerText = "";
           restartButton.style.display = "block";
         }
       }
